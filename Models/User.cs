@@ -20,7 +20,6 @@ public class User
     /// <param name="userName">The username of the User</param>
     /// <param name="passWord">The password of the User</param>
     /// <param name="Role">The role of the User, either manager or employee</param>
-    /// <returns></returns>
     public User(string ID, string userName, string passWord, Role role)
     {
         this.ID = ID;

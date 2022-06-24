@@ -20,13 +20,8 @@ public class Ticket
     /// <param name="status">The status of the Ticket can be Pending, Approved, or Denied/</param>
     /// <param name="amount">The dollar amount stored on the Ticket/</param>    
     /// <returns></returns>
-    public Ticket(
-        string ID,
-        string author,
-        string resolver,
-        string description,
-        string status,
-        decimal amount)
+    
+    public Ticket(string ID, string author, string resolver, string description, string status, decimal amount)
     {
         this.ID = ID;
         this.author = author;

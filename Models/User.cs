@@ -7,10 +7,10 @@ public enum Role
 }
 public class User
 {
-    public string ID {get; set;}
-    public string userName {get; set;}
-    public string passWord {get; set;}
-    public Role role {get; set;}
+    public string ID { get;  set;}
+    public string userName { get;  set;}
+    public string passWord { get;  set;}
+    public Role role { get;  set;}
     
     
     /// <summary>
@@ -27,34 +27,4 @@ public class User
         this.passWord = passWord;
         this.role = role;
     }
-
-    /*
-    this is the syntactic sugar that makes the variable, getter, and setter for ID
-    public string ID {get; set;}
-
-    
-
-    this longer way of writing the getter and setter for ID
-    private string ID;
-    public string getID()
-    {
-        return ID;
-    }
-    public string setID(string setID)
-    {
-        ID = setID;
-        return ID;
-    }
-
-
-
-    the way I typically make constructors in Java
-    public User(string setID, string setUserName, string setPassWord, Role setRole)
-    {
-        ID = setID;
-        userName = setUserName;
-        passWord = setPassWord;
-        role = setRole;
-    }
-    */
 }

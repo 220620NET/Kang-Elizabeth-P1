@@ -28,4 +28,36 @@ public class Ticket
         this.status = status;
         this.amount = amount;
     }
+    
+    /*
+
+    this is the syntactic sugar that makes the variable, getter, and setter for ID
+    public string ID {get; set;}
+
+    
+
+    this longer way of writing the getter and setter for ID
+    private string ID;
+    public string getID()
+    {
+        return ID;
+    }
+    public string setID(string setID)
+    {
+        ID = setID;
+        return ID;
+    }
+
+
+
+    the way I typically make constructors in Java
+    public Ticket(string setID, string setAuthor, string setResolver, string setDescription, string setStatus, decimal setAmount)
+    {
+        ID = setID;
+        author = setAuthor;
+        resolver = setResolver;
+        decription = setDescription;
+        status = setStatus;
+        amount = setAmount;
+    */
 }

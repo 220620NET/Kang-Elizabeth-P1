@@ -18,9 +18,7 @@ public class Ticket
     /// <param name="resolver">The ID of the user who resolved of the Ticket</param>
     /// <param name="description">The description of the reason for the request</param>
     /// <param name="status">The status of the Ticket can be Pending, Approved, or Denied/</param>
-    /// <param name="amount">The dollar amount stored on the Ticket/</param>    
-    /// <returns></returns>
-    
+    /// <param name="amount">The dollar amount stored on the Ticket/</param>
     public Ticket(string ID, string author, string resolver, string description, string status, decimal amount)
     {
         this.ID = ID;

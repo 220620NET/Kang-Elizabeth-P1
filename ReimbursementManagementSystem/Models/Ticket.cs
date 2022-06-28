@@ -6,8 +6,15 @@ public class Ticket
     public string author {get; set;}
     public string resolver {get; set;}
     public string decription {get; set;}
-    public string status {get; set;}
+    public Status status {get; set;}
     public decimal amount {get; set;}
+
+
+    public enum Status {
+        Pending,
+        Approved,
+        Denied
+    }
 
 
     /// <summary>
@@ -19,7 +26,7 @@ public class Ticket
     /// <param name="description">The description of the reason for the request</param>
     /// <param name="status">The status of the Ticket can be Pending, Approved, or Denied/</param>
     /// <param name="amount">The dollar amount stored on the Ticket/</param>
-    public Ticket(string ID, string author, string resolver, string description, string status, decimal amount)
+    public Ticket(string ID, string author, string resolver, string description, Status status, decimal amount)
     {
         this.ID = ID;
         this.author = author;

@@ -12,14 +12,11 @@ public class Ticket
     public string ID {get; set;}
     public string author {get; set;}
     public string resolver {get; set;}
-    public string decription {get; set;}
+    public string description {get; set;}
     public Status status {get; set;}
     public decimal amount {get; set;}
 
-
-    /// <summary>
-    /// This is the constructor for the Ticket Object
-    /// </summary>
+    /// <summary>This is the constructor for the Ticket Object</summary>
     /// <param name="ID">A unique string associated with the Ticket</param>
     /// <param name="author">The ID of the user who authored the Ticket</param>
     /// <param name="resolver">The ID of the user who resolved of the Ticket</param>
@@ -31,10 +28,24 @@ public class Ticket
         this.ID = ID;
         this.author = author;
         this.resolver = resolver;
-        this.decription = description;
+        this.description = description;
         this.status = status;
         this.amount = amount;
     }
-    
 
+    public override string ToString()
+    {
+        return "Ticket Object:\n" +
+            "ID = " + ID + "\n" +
+            "Author = " + author + "\n" +
+            "Resolver = " + resolver + "\n" +
+            "Description = " + description + "\n" +
+            "Status = " + status + "\n" +
+            "Amount = " + amount + "\n";
+    }
+
+    public bool Equals(Ticket comp)
+    {
+        return true;
+    }
 }

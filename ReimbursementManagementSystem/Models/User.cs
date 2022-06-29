@@ -5,6 +5,7 @@ public enum Role
     Manager,
     Employee
 }
+
 public class User
 {
     public string ID { get;  set;}
@@ -12,10 +13,7 @@ public class User
     public string passWord { get;  set;}
     public Role role { get;  set;}
     
-    
-    /// <summary>
-    /// This is the constructor for the User object.
-    /// </summary>
+    /// <summary>This is the constructor for the User object</summary>
     /// <param name="ID">A unique associated with the User</param>
     /// <param name="userName">The username of the User</param>
     /// <param name="passWord">The password of the User</param>
@@ -26,5 +24,14 @@ public class User
         this.userName = userName;
         this.passWord = passWord;
         this.role = role;
+    }
+
+    public override string ToString()
+    {
+        return "User Object:\n" +
+            "ID = " + ID + "\n" +
+            "Username = " + userName + "\n" +
+            "Password = " + passWord + "\n" +
+            "Role = " + role;
     }
 }

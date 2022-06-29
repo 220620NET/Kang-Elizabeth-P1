@@ -2,19 +2,19 @@ namespace Models;
 
 public class Ticket
 {
+    public enum Status
+    {
+        Pending,
+        Approved,
+        Denied
+    }
+
     public string ID {get; set;}
     public string author {get; set;}
     public string resolver {get; set;}
     public string decription {get; set;}
     public Status status {get; set;}
     public decimal amount {get; set;}
-
-
-    public enum Status {
-        Pending,
-        Approved,
-        Denied
-    }
 
 
     /// <summary>

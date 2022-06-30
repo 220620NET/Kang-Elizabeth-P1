@@ -34,4 +34,37 @@ public class User
             "Password = " + passWord + "\n" +
             "Role = " + role;
     }
+
+    // public override bool Equals(object obj)
+    // {
+    //     if (obj == null || GetType() != obj.GetType())
+    //     {
+    //         return false;
+    //     }
+    //     else
+    //     {
+    //         User user = (User)obj;
+
+    //         return user.ID == this.ID &&
+    //             user.userName == this.userName &&
+    //             user.passWord == this.passWord &&
+    //             user.role ==  this.role;
+    //     }
+    // }
+
+    public override bool Equals(object other) =>
+        other is User usr &&
+        (usr.ID, usr.userName, usr.passWord, usr.role).Equals((ID, userName, passWord, role));
+
+    // public override int GetHashCode()
+    // {
+    //     int hashcode = 123;
+    //     hashcode = hashcode * 2 ^ ID.GetHashCode();
+    //     hashcode = hashcode * 2 ^ userName.GetHashCode();
+    //     hashcode = hashcode * 2 ^ passWord.GetHashCode();
+    //     hashcode = hashcode * 2 ^ role.GetHashCode();
+    //     return hashcode;
+    // }
+    public override int GetHashCode() => (ID, userName, passWord, role).GetHashCode();
+    
 }

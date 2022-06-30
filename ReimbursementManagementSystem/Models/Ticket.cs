@@ -41,11 +41,25 @@ public class Ticket
             "Resolver = " + resolver + "\n" +
             "Description = " + description + "\n" +
             "Status = " + status + "\n" +
-            "Amount = " + amount + "\n";
+            "Amount = " + amount;
     }
 
-    public bool Equals(Ticket comp)
+    public override bool Equals(object obj)
     {
-        return true;
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        else
+        {
+            Ticket ticket = (Ticket)obj;
+
+            return ticket.ID == this.ID &&
+                ticket.author == this.author &&
+                ticket.resolver == this.resolver &&
+                ticket.description ==  this.description &&
+                ticket.status ==  this.status &&
+                ticket.amount ==  this.amount;
+        }
     }
 }

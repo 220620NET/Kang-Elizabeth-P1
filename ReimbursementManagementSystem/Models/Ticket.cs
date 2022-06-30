@@ -64,4 +64,6 @@ public class Ticket
                 ticket.amount ==  this.amount;
         }
     }
+
+    public override int GetHashCode() => (author, resolver, description, status, amount).GetHashCode();
 }

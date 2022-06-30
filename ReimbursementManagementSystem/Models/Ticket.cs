@@ -9,14 +9,16 @@ public class Ticket
         Denied
     }
 
-    public string ID {get; set;}
-    public string author {get; set;}
-    public string resolver {get; set;}
-    public string description {get; set;}
-    public Status status {get; set;}
-    public decimal amount {get; set;}
+    public string ID { get; set;}
+    public string author { get; set;}
+    public string resolver { get; set;}
+    public string description { get; set;}
+    public Status status { get; set;}
+    public decimal amount { get; set;}
 
-    /// <summary>This is the constructor for the Ticket Object</summary>
+    /// <summary>
+    /// This is the constructor for the Ticket Object
+    /// </summary>
     /// <param name="ID">A unique string associated with the Ticket</param>
     /// <param name="author">The ID of the user who authored the Ticket</param>
     /// <param name="resolver">The ID of the user who resolved of the Ticket</param>

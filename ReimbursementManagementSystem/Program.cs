@@ -31,5 +31,5 @@ ticket2.ID = "new test";
 
 Console.WriteLine(ticket1.Equals(ticket2)); //Equals Works
 
-Console.WriteLine(user1.GetHashCode());
-Console.WriteLine(user2.GetHashCode());
+Console.WriteLine(user1.ID.GetHashCode());
+Console.WriteLine(user2.ID.GetHashCode());

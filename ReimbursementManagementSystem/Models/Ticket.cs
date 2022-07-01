@@ -65,5 +65,21 @@ public class Ticket
         }
     }
 
-    public override int GetHashCode() => (author, resolver, description, status, amount).GetHashCode();
+    // public override bool Equals(object other) =>
+    //     other is Ticket tick &&
+    //     (tick.ID, tick.author, tick.resolver, tick.description, tick.status, tick.amount).Equals((ID, author, resolver, description, status, amount));
+
+    public override int GetHashCode()
+    {
+        int hashcode = 12;
+        hashcode = hashcode * 2 ^ ID.GetHashCode();
+        hashcode = hashcode * 2 ^ author.GetHashCode();
+        hashcode = hashcode * 2 ^ resolver.GetHashCode();
+        hashcode = hashcode * 2 ^ description.GetHashCode();
+        hashcode = hashcode * 2 ^ status.GetHashCode();
+        hashcode = hashcode * 2 ^ amount.GetHashCode();
+        return hashcode;
+    }
+
+    // public override int GetHashCode() => (author, resolver, description, status, amount).GetHashCode();
 }

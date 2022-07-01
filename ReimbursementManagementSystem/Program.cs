@@ -1,5 +1,6 @@
 ﻿using Models;
 using CustomExceptions;
+using System.Text.RegularExpressions;
 
 //USER TESTING
 User user1 = new User("test", "test", "test", Role.Manager);
@@ -20,6 +21,10 @@ Console.WriteLine();
 //TICKET TESTING
 Ticket ticket1 = new Ticket("test", "test", "test", "test", Ticket.Status.Pending, 1);
 Ticket ticket2 = new Ticket("test", "test", "test", "test", Ticket.Status.Pending, 1);
+Ticket ticket3 = new Ticket("test", "test", "test", "test", Ticket.Status.Pending, 1);
+
+ticket3 = ticket1;
+
 
 Console.WriteLine(ticket1); //ToString Works
 
@@ -33,3 +38,8 @@ Console.WriteLine(ticket1.Equals(ticket2)); //Equals Works
 
 Console.WriteLine(user1.ID.GetHashCode());
 Console.WriteLine(user2.ID.GetHashCode());
+
+Console.WriteLine(ticket1.GetHashCode());
+Console.WriteLine(ticket3.GetHashCode());
+
+Guid g = Guid.NewGuid();

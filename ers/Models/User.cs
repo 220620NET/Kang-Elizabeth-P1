@@ -8,32 +8,44 @@ public enum Role
 
 public class User
 {
-    public string ID { get;  set;}
-    public string userName { get;  set;}
-    public string passWord { get;  set;}
+    public int ID { get;  set;}
+    public string username { get;  set;}
+    public string password { get;  set;}
     public Role role { get;  set;}
     
     /// <summary>
     ///This is the constructor for the User object
     ///</summary>
-    /// <param name="ID">A unique associated with the User</param>
-    /// <param name="userName">The username of the User</param>
-    /// <param name="passWord">The password of the User</param>
-    /// <param name="Role">The role of the User, either manager or employee</param>
-    public User(string ID, string userName, string passWord, Role role)
+    /// <param name="ID">A unique int associated with the User</param>
+    /// <param name="username">The username of the User</param>
+    /// <param name="password">The password of the User</param>
+    /// <param name="role">The role of the User, either manager or employee</param>
+    public User(int ID, string username, string password, Role role)
     {
         this.ID = ID;
-        this.userName = userName;
-        this.passWord = passWord;
+        this.username = username;
+        this.password = password;
         this.role = role;
+    }
+
+    public User(string username, string password, Role role)
+    {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    public User()
+    {
+
     }
 
     public override string ToString()
     {
         return "User Object:\n" +
             "ID = " + ID + "\n" +
-            "Username = " + userName + "\n" +
-            "Password = " + passWord + "\n" +
+            "Username = " + username + "\n" +
+            "Password = " + password + "\n" +
             "Role = " + role;
     }
 
@@ -48,8 +60,8 @@ public class User
             User user = (User)obj;
 
             return user.ID == this.ID &&
-                user.userName == this.userName &&
-                user.passWord == this.passWord &&
+                user.username == this.username &&
+                user.password == this.password &&
                 user.role ==  this.role;
         }
     }
@@ -62,8 +74,8 @@ public class User
     {
         int hashcode = 12;
         hashcode = hashcode * 2 ^ ID.GetHashCode();
-        hashcode = hashcode * 2 ^ userName.GetHashCode();
-        hashcode = hashcode * 2 ^ passWord.GetHashCode();
+        hashcode = hashcode * 2 ^ username.GetHashCode();
+        hashcode = hashcode * 2 ^ password.GetHashCode();
         hashcode = hashcode * 2 ^ role.GetHashCode();
         return hashcode;
     }

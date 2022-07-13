@@ -11,7 +11,8 @@ class test
     {
         
         User attempt = new User("firsttest", "passowrd", 0);
-        Console.WriteLine(new UserRepository().GetUserById(1));
+        List<Ticket> tixs = new TicketRepository().GetAllTicketsByAuthor(1);
+        Console.WriteLine(tixs[0]);
     }
 }
 

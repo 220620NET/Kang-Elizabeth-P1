@@ -4,25 +4,20 @@ namespace DataAccess;
 
 public class ConnectionFactory
 {
-    string connectionString = "";
+    private static ConnectionFactory? _instance;
+    private readonly static string _connectionString = File.ReadAllText("../DataAccess/connectionString.txt");
+    private ConnectionFactory() {}
+    public static ConnectionFactory GetInstance()
+    {
+        if(_instance == null)
+        {
+            _instance = new ConnectionFactory();
+        }
+        return _instance;
+    }
 
     public SqlConnection GetConnection()
     {
-        SqlConnection connection = new SqlConnection(connectionString);
-        connection.Open();
-        return connection;
+        return new SqlConnection(_connectionString);
     }
-
-    public bool EndConnection()
-    {
-        new SqlConnection(connectionString).Close();
-        return true;
-    }
-
-    public SqlCommand GetInstance(string sql)
-    {
-        return new SqlCommand(sql, GetConnection());
-    }
-
-
 }

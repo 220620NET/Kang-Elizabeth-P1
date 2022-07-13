@@ -39,7 +39,7 @@ public class TicketService
     {
         try
         {
-            return new TicketRepository().GetTicketsById(ticketID);
+            return new TicketRepository().GetTicketById(ticketID);
         }
         catch (Exception)
         {

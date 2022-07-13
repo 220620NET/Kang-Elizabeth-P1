@@ -1,212 +1,133 @@
 using System.Data.SqlClient;
 using Models;
+using CustomExceptions;
 
 namespace DataAccess;
 
-public class TicketRepository : TicketDAO
+public class TicketRepository : ITicketDAO
 {
-    string connectionString = "";
+    private readonly ConnectionFactory _connectionFactory;
+    
+    public TicketRepository()
+    {
+        _connectionFactory = ConnectionFactory.GetInstance();
+    }
 
     public List<Ticket> GetAllTickets()
     {
-        string sql = "SELECT * FROM ers.tickets;";
-
-        SqlConnection connection = new SqlConnection(connectionString);
-
-        SqlCommand command = new SqlCommand(sql, connection);
-
         List<Ticket> tickets = new List<Ticket>();
+        SqlConnection conn = _connectionFactory.GetConnection();
+        conn.Open();
 
-        Ticket ticket = new Ticket();
+        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.tickets", conn);
+        SqlDataReader reader = cmd.ExecuteReader();
 
-        try
+        while(reader.Read())
         {
-            connection.Open();
+            Ticket tick = new Ticket();
+            Status state = (Status)tick.StringToNum((string)reader["status"]);
             
-            SqlDataReader reader = command.ExecuteReader();
-
-            while(reader.Read())
+            tickets.Add(new Ticket
             {
-                tickets.Add(new Ticket((int)reader[0], (int) reader[1], (int)reader[2], (string)reader[3], (Status)reader[4], (decimal)reader[5]));
-            }
-
-            reader.Close();
-            connection.Close();
-        }
-
-        catch(Exception e)
-        {
-            Console.WriteLine(e.Message);
-            return new List<Ticket>();
-
+                ID = (int)reader["ticket_ID"],
+                authorID = (int)reader["author_fk"],
+                resolverID = (int)reader["resolver_fk"],
+                description = (string)reader["description"],
+                status = state,
+                amount = (decimal)reader["amount"]
+            });
         }
         return tickets;
     }
+
     public List<Ticket> GetAllTicketsByAuthor(int authorID)
     {
-        string sql = "SELECT * FROM ers.Tickets WHERE author_fk = @a;";
-
-        SqlConnection connection = new SqlConnection(connectionString);
-
-        SqlCommand command = new SqlCommand(sql, connection);
-
-        command.Parameters.AddWithValue("@a", authorID);
-
         List<Ticket> tickets = new List<Ticket>();
+        SqlConnection conn = _connectionFactory.GetConnection();
+        conn.Open();
 
-        try
+        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Tickets WHERE author_fk = @a;", conn);
+        cmd.Parameters.AddWithValue("@a", authorID);
+        SqlDataReader reader = cmd.ExecuteReader();
+
+        while(reader.Read())
         {
-            connection.Open();
-
-            SqlDataReader reader = command.ExecuteReader();
-
-            while(reader.Read())
+            Ticket tick = new Ticket();
+            Status state = (Status)tick.StringToNum((string)reader["status"]);
+            
+            tickets.Add(new Ticket
             {
-                tickets.Add(new Ticket((int)reader[0], (int)reader[1], (int)reader[2], (string)reader[3], (Status)reader[4], (decimal)reader[5]));
-            }
-
-            reader.Close();
-            connection.Close();
-        }
-
-        catch(Exception e)
-        {
-            Console.WriteLine(e.Message);
-            return new List<Ticket>();
+                ID = (int)reader["ticket_ID"],
+                authorID = (int)reader["author_fk"],
+                resolverID = (int)reader["resolver_fk"],
+                description = (string)reader["description"],
+                status = state,
+                amount = (decimal)reader["amount"]
+            });
         }
         return tickets;
     }
-    public List<Ticket> GetAllTicketsByStatus (Status state)
+
+    public List<Ticket> GetAllTicketsByStatus (Status status)
     {
-        string sql = "SELECT * FROM ers.Tickets WHERE status = @s;";
-
-        SqlConnection connection = new SqlConnection(connectionString);
-
-        SqlCommand command = new SqlCommand(sql, connection);
-
-        command.Parameters.AddWithValue("@s", state);
-
         List<Ticket> tickets = new List<Ticket>();
+        SqlConnection conn = _connectionFactory.GetConnection();
+        conn.Open();
 
-        try
+        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Tickets WHERE author_fk = @s;", conn);
+        cmd.Parameters.AddWithValue("@s", status);
+
+        SqlDataReader reader = cmd.ExecuteReader();
+
+        while(reader.Read())
         {
-            connection.Open();
-
-            SqlDataReader reader = command.ExecuteReader();
-
-            while(reader.Read())
+            Ticket tick = new Ticket();
+            Status state = (Status)tick.StringToNum((string)reader["status"]);
+            
+            tickets.Add(new Ticket
             {
-                tickets.Add(new Ticket((int)reader[0], (int)reader[1], (int)reader[2], (string)reader[3], (Status)reader[4], (decimal)reader[5]));
-            }
-
-            reader.Close();
-            connection.Close();
-        }
-
-        catch(Exception e)
-        {
-            Console.WriteLine(e.Message);
-            return new List<Ticket>();
+                ID = (int)reader["ticket_ID"],
+                authorID = (int)reader["author_fk"],
+                resolverID = (int)reader["resolver_fk"],
+                description = (string)reader["description"],
+                status = state,
+                amount = (decimal)reader["amount"]
+            });
         }
         return tickets;
     }
-    public Ticket GetTicketsById(int ticketID)
+    public Ticket GetTicketById(int ticketID)
     {
-        string sql = "SELECT * FROM ers.Tickets WHERE ticket_ID = @i;";
+        SqlConnection conn = _connectionFactory.GetConnection();
+        conn.Open();
 
-        SqlConnection connection = new SqlConnection(connectionString);
+        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Tickets WHERE author_fk = @ID;", conn);
+        cmd.Parameters.AddWithValue("@ID", ticketID);
+        SqlDataReader reader = cmd.ExecuteReader();
 
-        SqlCommand command = new SqlCommand(sql, connection);
-
-        command.Parameters.AddWithValue("@i", ticketID);
-        Ticket returnTicket = new Ticket();
-        try
+        while(reader.Read())
         {
-            connection.Open();
+            Ticket tick = new Ticket();
+            Status state = (Status)tick.StringToNum((string)reader["status"]);
 
-            SqlDataReader reader = command.ExecuteReader();
-
-            while(reader.Read())
+            return new Ticket
             {
-                Ticket ticket = new Ticket ((int)reader[0], (int)reader[1], (int)reader[2], (string)reader[3], (Status)reader[4], (decimal)reader[5]);
-                returnTicket = ticket;
-            }
-
-            reader.Close();
-            connection.Close();
+                ID = (int)reader["ticket_ID"],
+                authorID = (int)reader["author_fk"],
+                resolverID = (int)reader["resolver_fk"],
+                description = (string)reader["description"],
+                status = state,
+                amount = (decimal)reader["amount"]
+            };
         }
-
-        catch(Exception e)
-        {
-            Console.WriteLine(e.Message);
-            return new Ticket();
-        }
-        return returnTicket;
+        throw new ResourceNotFoundException("Could not find the ticket associated with the ID");
     }
     public bool CreateTicket(Ticket ticket)
     {
-        string sql = "INSERT INTO ers.Tickets (author_fk, description, amount) VALUES (@at, @d, @am);";
-
-        SqlConnection connection = new SqlConnection (connectionString);
-
-        SqlCommand command = new SqlCommand(sql, connection);
-
-        command.Parameters.AddWithValue("@at", ticket.authorID);
-        command.Parameters.AddWithValue("@d", ticket.description);
-        command.Parameters.AddWithValue("@am", ticket.amount);
-
-        try
-        {
-            connection.Open();
-
-            int rowsAffected = command.ExecuteNonQuery();
-            
-            connection.Close();
-
-            if(rowsAffected != 0)
-            {
-                return true;
-            }
-        }
-
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
-
-        return false;
+        return true;
     }
     public bool UpdateTicket(Ticket ticket)
     {
-        string sql = "UPDATE ers.Tickets SET stauts = @s, resolver = @r WHERE ticket_ID = @id;";
-
-        SqlConnection connection = new SqlConnection (connectionString);
-
-        SqlCommand command = new SqlCommand(sql, connection);
-
-        command.Parameters.AddWithValue("@id", ticket.ID);
-        command.Parameters.AddWithValue("@r", ticket.resolverID);
-        command.Parameters.AddWithValue("@s", ticket.status);
-
-        try
-        {
-            connection.Open();
-
-            int rowsAffected = command.ExecuteNonQuery();
-            
-            connection.Close();
-
-            if(rowsAffected != 0)
-            {
-                return true;
-            }
-        }
-
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
-
-        return false;
+        return true;
     }
 }

@@ -3,7 +3,7 @@ using Models;
 
 namespace DataAccess;
 
-public class UserRepository : UserDAO
+public class UserRepository : IUserDAO
 {
     string connectionString = "";
 

@@ -34,11 +34,33 @@ public class Ticket
         this.amount = amount;
     }
 
-    public Ticket()
-    {
-        
-    }
+    public Ticket() {}
 
+    public string NumToString(int input)
+    {
+        switch(input)
+        {
+            case 1:
+                return "Approved";
+            case 2:
+                return "Denied";
+            default:
+                return "Pending";
+        }
+    }
+    public int StringToNum(string input)
+    {
+        switch(input)
+        {
+            case "Approved":
+                return 1;
+            case "Denied":
+                return 2;
+            default:
+                return 0;
+        }
+    }
+    
     public override string ToString()
     {
         return "Ticket Object:\n" +

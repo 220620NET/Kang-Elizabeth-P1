@@ -2,18 +2,24 @@ using Models;
 
 namespace DataAccess;
 
-public interface TicketDAO
+
+/// <summary>
+/// Interface for TicketRepository class
+/// </summary>
+public interface ITicketDAO
 {
     public List<Ticket> GetAllTickets();
     public List<Ticket> GetAllTicketsByAuthor(int authorID);
     public List<Ticket> GetAllTicketsByStatus (Status state);
-    public Ticket GetTicketsById(int ticketID);
+    public Ticket GetTicketById(int ticketID);
     public bool CreateTicket(Ticket ticket);
     public bool UpdateTicket(Ticket ticket);
 
 } 
-
-public interface UserDAO
+/// <summary>
+/// Interface for UserRepository class
+/// </summary>
+public interface IUserDAO
 {
     public List<User> GetAllUsers();
     public User GetUserById(int userID);

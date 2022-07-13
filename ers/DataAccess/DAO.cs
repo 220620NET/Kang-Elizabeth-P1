@@ -12,8 +12,8 @@ public interface ITicketDAO
     public List<Ticket> GetAllTicketsByAuthor(int authorID);
     public List<Ticket> GetAllTicketsByStatus (Status state);
     public Ticket GetTicketById(int ticketID);
-    public bool CreateTicket(Ticket ticket);
-    public bool UpdateTicket(Ticket ticket);
+    public Ticket CreateTicket(Ticket ticket);
+    public Ticket UpdateTicket(Ticket ticket);
 
 } 
 /// <summary>
@@ -24,6 +24,6 @@ public interface IUserDAO
     public List<User> GetAllUsers();
     public User GetUserById(int userID);
     public User GetUserbyUsername(string username);
-    public bool CreateUser(User user);
-    
+    public User CreateUser(User user);
+    //public User UpdateTicket(Ticket ticket);
 } 

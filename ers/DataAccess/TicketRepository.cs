@@ -1,4 +1,5 @@
 using System.Data.SqlClient;
+using System.Data;
 using Models;
 using CustomExceptions;
 
@@ -122,12 +123,47 @@ public class TicketRepository : ITicketDAO
         }
         throw new ResourceNotFoundException("Could not find the ticket associated with the ID");
     }
-    public bool CreateTicket(Ticket ticket)
+    public Ticket CreateTicket(Ticket newTicketToAdd)
     {
-        return true;
+        DataSet ticketSet = new DataSet();
+
+        SqlDataAdapter ticketAdapter = new SqlDataAdapter("SELECT * FROM ers.Tickets", _connectionFactory.GetConnection());
+
+        ticketAdapter.Fill(ticketSet, "ticketTable");
+
+        DataTable? ticketTable = ticketSet.Tables["ticketTable"];
+
+        if(ticketTable != null)
+        {
+            DataRow newTicket = ticketTable.NewRow();
+            newTicket["author_fk"] = newTicketToAdd.authorID;
+            newTicket["resolver_fk"] = newTicketToAdd.resolverID;
+            newTicket["description"] = newTicketToAdd.description;
+            newTicket["status"] = newTicketToAdd.status;
+            newTicket["amount"] = newTicketToAdd.amount;
+        
+            ticketTable.Rows.Add(newTicket);
+
+            SqlCommandBuilder cmdbuilder = new SqlCommandBuilder(ticketAdapter);
+
+            SqlCommand insertCommand = cmdbuilder.GetInsertCommand();
+            ticketAdapter.InsertCommand = insertCommand;
+
+            ticketAdapter.Update(ticketTable);
+        }
+
+        return newTicketToAdd;
     }
-    public bool UpdateTicket(Ticket ticket)
+    public Ticket UpdateTicket(Ticket UpdatedTicket)
     {
-        return true;
+        DataSet ticketSet = new DataSet();
+
+        SqlDataAdapter ticketAdapter = new SqlDataAdapter("SELECT * FROM ers.Tickets", _connectionFactory.GetConnection());
+
+        ticketAdapter.Fill(ticketSet, "ticketTable");
+
+        DataTable? ticketTable = ticketSet.Tables["ticketTable"];
+        
+        return new Ticket();
     }
 }

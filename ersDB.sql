@@ -21,8 +21,8 @@ CREATE TABLE ers.Users (
 CREATE TABLE ers.Tickets (
 	ticket_ID INT IDENTITY,
 	author_fk INT NOT NULL FOREIGN KEY REFERENCES ers.Users(user_ID),
-	resolver_fk INT NOT NULL FOREIGN KEY REFERENCES ers.Users(user_ID),
-	description VARCHAR(50) NOT NULL,
+	resolver_fk INT FOREIGN KEY REFERENCES ers.Users(user_ID),
+	description VARCHAR(127) NOT NULL,
 	status VARCHAR(8) NOT NULL CHECK (status IN ('Pending', 'Approved', 'Denied')),
 	amount DECIMAL NOT NULL,
 	PRIMARY KEY (ticket_ID)

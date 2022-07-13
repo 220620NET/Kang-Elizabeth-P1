@@ -34,6 +34,14 @@ public class Ticket
         this.amount = amount;
     }
 
+        public Ticket(int authorID, string descriptiom, decimal amount)
+    {
+        this.authorID = authorID;
+        this.description = description;
+        this.status = Status.Pending;
+        this.amount = amount;
+    }
+
     public Ticket() {}
 
     public string NumToString(int input)

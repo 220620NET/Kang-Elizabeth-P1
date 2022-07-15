@@ -28,6 +28,12 @@ public class User
         this.role = role;
     }
 
+    /// <summary>
+    /// This is the constructor for the User object
+    ///</summary>
+    /// <param name="username">The username of the User</param>
+    /// <param name="password">The password of the User</param>
+    /// <param name="role">The role of the User, either manager or employee</param>
     public User(string username, string password, Role role)
     {
         this.username = username;
@@ -35,9 +41,38 @@ public class User
         this.role = role;
     }
 
-    public User()
-    {
+    public User() {}
 
+    /// <summary>
+    /// This method turns a String into a Role enum.
+    /// </summary>
+    /// <param name="input">Only accepts "Employee" "Manager"</param>
+    /// <return> Role corresponding to the input </return>
+    public Role StringToRole(string input)
+    {
+        Dictionary<string,Role> dictRole = new Dictionary<string, Role>()
+        {
+            {"Employee", Role.Employee},
+            {"Manager", Role.Manager}
+        };
+
+        return dictRole[input];
+    }
+
+    /// <summary>
+    /// This method turns a Role enum into a String.
+    /// </summary>
+    /// <param name="input">Only accepts Role enums"</param>
+    /// <return> String corresponding to the input </return>
+    public String RoleToString(Role input)
+    {
+        Dictionary<Role,string> dictRole = new Dictionary<Role, string>()
+        {
+            {Role.Employee, "Employee"},
+            {Role.Manager, "Manager"}
+        };
+
+        return dictRole[input];
     }
 
     public override string ToString()

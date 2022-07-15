@@ -33,8 +33,8 @@ public class Ticket
         this.status = status;
         this.amount = amount;
     }
-
-        public Ticket(int authorID, string descriptiom, decimal amount)
+    
+    public Ticket(int authorID, string descriptiom, decimal amount)
     {
         this.authorID = authorID;
         this.description = description;
@@ -43,32 +43,41 @@ public class Ticket
     }
 
     public Ticket() {}
-
-    public string NumToString(int input)
-    {
-        switch(input)
-        {
-            case 1:
-                return "Approved";
-            case 2:
-                return "Denied";
-            default:
-                return "Pending";
-        }
-    }
-    public int StringToNum(string input)
-    {
-        switch(input)
-        {
-            case "Approved":
-                return 1;
-            case "Denied":
-                return 2;
-            default:
-                return 0;
-        }
-    }
     
+    /// <summary>
+    /// This method turns a String into a Status enum.
+    /// </summary>
+    /// <param name="input">Only accepts string "Approved" "Denied" "Pending"</param>
+    /// <return> Status corresponding to the input </return>
+    public Status StringToStatus(string input)
+    {
+        Dictionary<string,Status> dictStatus = new Dictionary<string, Status>()
+        {
+            {"Pending", Status.Pending},
+            {"Approved", Status.Approved},
+            {"Denied", Status.Denied}
+        };
+
+        return dictStatus[input];
+    }
+
+    /// <summary>
+    /// This method turns a Status enum into a String.
+    /// </summary>
+    /// <param name="input">Only accepts Status enums"</param>
+    /// <return> String corresponding to the input </return>
+    public string StatusToString(Status input)
+    {
+        Dictionary<Status,string> dictStatus = new Dictionary<Status, string>()
+        {
+            {Status.Pending, "Pending"},
+            {Status.Approved, "Approved"},
+            {Status.Denied, "Denied"}
+        };
+
+        return dictStatus[input];
+    }
+
     public override string ToString()
     {
         return "Ticket Object:\n" +
@@ -102,7 +111,6 @@ public class Ticket
     // public override bool Equals(object other) =>
     //     other is Ticket tick &&
     //     (tick.ID, tick.author, tick.resolver, tick.description, tick.status, tick.amount).Equals((ID, author, resolver, description, status, amount));
-
     public override int GetHashCode()
     {
         int hashcode = 12;

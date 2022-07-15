@@ -1,147 +1,119 @@
-// using System.Data.SqlClient;
-// using Models;
+using System.Data.SqlClient;
+using System.Data;
+using Models;
+using CustomExceptions;
 
-// namespace DataAccess;
+namespace DataAccess;
 
-// public class UserRepository : IUserDAO
-// {
-//     string connectionString = "";
-
-//     public List<User> GetAllUsers()
-//     {
-//         List<User> users = new List<User>();
-        
-//         string sql = "SELECT * FROM ers.Users";
-
-//         SqlConnection connection = new SqlConnection(connectionString);
-        
-//         SqlCommand command = new SqlCommand(sql, connection);
-
-//         try
-//         {
-//             connection.Open();
-            
-//             SqlDataReader reader = command.ExecuteReader();
-            
-//             while(reader.Read())
-//             {
-//                 users.Add(new User((int) reader[0], (string) reader[1], (string) reader[2], (Role) reader[3]));
-//             }
-//         }
-        
-//         catch(Exception e) 
-//         {
-//             Console.WriteLine(e.Message);
-//             return new List<User>();
-//         }
-
-//         return users;
-//     }
-
-//     public User GetUserById(int userID)
-//     {
-//         string sql = "SELECT * FROM ers.Users WHERE user_ID = @i;";
-
-//         SqlConnection connection = new SqlConnection(connectionString);
-
-//         SqlCommand command = new SqlCommand(sql, connection);
-
-//         command.Parameters.AddWithValue("@i", userID);
-
-//         User user = new User();
-
-//         try
-//         {
-//             connection.Open();
-            
-//             SqlDataReader reader = command.ExecuteReader();
-            
-//             while(reader.Read())
-//             {
-//                 user = new User((int)reader[0], (string)reader[1], (string)reader[2], (Role)reader[3]);
-//             }
-            
-//             reader.Close();
-            
-//             connection.Close();
-//         }
-
-//         catch (Exception e)
-//         {
-//             Console.WriteLine(e.Message);
-//             return new User();
-//         }
-
-//         return user;
-//     }
+public class UserRepository : IUserDAO
+{
+    private readonly ConnectionFactory _connectionFactory;
     
-//     public User GetUserbyUsername(string username)
-//     {
-//         string sql = "SELECT * FROM ers.Users WHERE username = @u;";
-        
-//         SqlConnection connection = new SqlConnection(connectionString);
-
-//         SqlCommand command = new SqlCommand(sql, connection);
-
-//         command.Parameters.AddWithValue("@u", username);
-
-//         User user = new User();
-
-//         try
-//         {
-//             connection.Open();
-
-//             SqlDataReader reader = command.ExecuteReader();
-
-//             while(reader.Read())
-//             {
-//                 user = new User((int)reader[0], (string)reader[1], (string)reader[2], (Role)reader[3]);
-//             }
-//              reader.Close();
-        
-//             connection.Close();
-//         }
-
-//         catch (Exception e)
-//         {
-//             Console.WriteLine(e.Message);
-
-//             return new User();
-//         }
-
-//         return user;
-//     }
+    public UserRepository(ConnectionFactory connectionFactory)
+    {
+        _connectionFactory = connectionFactory;
+    }
     
-//     public bool CreateUser(User newUser)
-//     {
-//         string sql = "INSERT INTO ers.Users(username, password, role) value (@u, @p, @r";
+    public List<User> GetAllUsers()
+    {
+        List<User> users = new List<User>();
+        SqlConnection conn = _connectionFactory.GetConnection();
+        conn.Open();
 
-//         SqlConnection connection = new SqlConnection(connectionString);
+        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Users", conn);
+        SqlDataReader reader = cmd.ExecuteReader();
 
-//         SqlCommand command = new SqlCommand(sql, connection);
+        while(reader.Read())
+        {
+            User usr = new User();
+            
+            users.Add(new User
+            {
+                ID = (int)reader["user_ID"],
+                username = (string)reader["username"],
+                password = (string)reader["password"],
+                role = usr.StringToRole((string)reader["role"])
+            });
+        }
+        return users;
+    }
+    
+    public User GetUserById(int userID)
+    {
+        SqlConnection conn = _connectionFactory.GetConnection();
+        conn.Open();
 
-//         command.Parameters.AddWithValue("@u", newUser.username);
-//         command.Parameters.AddWithValue("@p", newUser.password);
-//         command.Parameters.AddWithValue("@r", newUser.role);
+        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Users WHERE user_ID = @ID;", conn);
+        cmd.Parameters.AddWithValue("@ID", userID);
+        SqlDataReader reader = cmd.ExecuteReader();
 
-//         try
-//         {
-//             connection.Open();
+        while(reader.Read())
+        {
+            User usr = new User();
 
-//             int rowsAffected = command.ExecuteNonQuery();
-//             connection.Close();
+            return new User
+            {
+                ID = (int)reader["user_ID"],
+                username = (string)reader["username"],
+                password = (string)reader["password"],
+                role = usr.StringToRole((string)reader["role"])
+            };
+        }
+        throw new ResourceNotFoundException("Could not find the user associated with the ID");
+    }    
+    
+    public User GetUserByUsername(string username)
+    {
+        SqlConnection conn = _connectionFactory.GetConnection();
+        conn.Open();
 
-//             if(rowsAffected != 0)
-//             {
-//                 return true;
-//             }
-//         }
+        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Users WHERE user_ID = @usr;", conn);
+        cmd.Parameters.AddWithValue("@usr", username);
+        SqlDataReader reader = cmd.ExecuteReader();
 
-//         catch(Exception e)
-//         {
-//             Console.WriteLine(e.Message);
-//         }
+        while(reader.Read())
+        {
+            User usr = new User();
+
+            return new User
+            {
+                ID = (int)reader["user_ID"],
+                username = (string)reader["username"],
+                password = (string)reader["password"],
+                role = usr.StringToRole((string)reader["role"])
+            };
+        }
+        throw new ResourceNotFoundException("Could not find the user associated with the username");
+    }
+    
+    public bool CreateUser(User NewUserToAdd)
+    {
+        DataSet userSet = new DataSet();
+
+        SqlDataAdapter userAdapter = new SqlDataAdapter("SELECT * FROM ers.Users", _connectionFactory.GetConnection());
+
+        userAdapter.Fill(userSet, "userTable");
+
+        DataTable? userTable = userSet.Tables["userTable"];
+
+        if(userTable != null)
+        {
+            DataRow newUser = userTable.NewRow();
+            newUser["username"] = NewUserToAdd.username;
+            newUser["password"] = NewUserToAdd.password;
+            newUser["role"] = NewUserToAdd.role;
         
-//         return false;
-//     }
-// }
+            userTable.Rows.Add(newUser);
+
+            SqlCommandBuilder cmdbuilder = new SqlCommandBuilder(userAdapter);
+
+            SqlCommand insertCommand = cmdbuilder.GetInsertCommand();
+            userAdapter.InsertCommand = insertCommand;
+
+            userAdapter.Update(userTable);
+            return true;
+        }
+
+        return false;
+    }
+}

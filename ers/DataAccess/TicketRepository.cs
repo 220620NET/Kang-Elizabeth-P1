@@ -9,9 +9,9 @@ public class TicketRepository : ITicketDAO
 {
     private readonly ConnectionFactory _connectionFactory;
     
-    public TicketRepository()
+    public TicketRepository(ConnectionFactory connectionFactory)
     {
-        _connectionFactory = ConnectionFactory.GetInstance();
+        _connectionFactory = connectionFactory;
     }
 
     public List<Ticket> GetAllTickets()
@@ -26,7 +26,6 @@ public class TicketRepository : ITicketDAO
         while(reader.Read())
         {
             Ticket tick = new Ticket();
-            Status state = (Status)tick.StringToNum((string)reader["status"]);
             
             tickets.Add(new Ticket
             {
@@ -34,7 +33,7 @@ public class TicketRepository : ITicketDAO
                 authorID = (int)reader["author_fk"],
                 resolverID = (int)reader["resolver_fk"],
                 description = (string)reader["description"],
-                status = state,
+                status = tick.StringToStatus((string)reader["status"]),
                 amount = (decimal)reader["amount"]
             });
         }
@@ -54,7 +53,6 @@ public class TicketRepository : ITicketDAO
         while(reader.Read())
         {
             Ticket tick = new Ticket();
-            Status state = (Status)tick.StringToNum((string)reader["status"]);
             
             tickets.Add(new Ticket
             {
@@ -62,7 +60,7 @@ public class TicketRepository : ITicketDAO
                 authorID = (int)reader["author_fk"],
                 resolverID = (int)reader["resolver_fk"],
                 description = (string)reader["description"],
-                status = state,
+                status = tick.StringToStatus((string)reader["status"]),
                 amount = (decimal)reader["amount"]
             });
         }
@@ -83,7 +81,6 @@ public class TicketRepository : ITicketDAO
         while(reader.Read())
         {
             Ticket tick = new Ticket();
-            Status state = (Status)tick.StringToNum((string)reader["status"]);
             
             tickets.Add(new Ticket
             {
@@ -91,25 +88,25 @@ public class TicketRepository : ITicketDAO
                 authorID = (int)reader["author_fk"],
                 resolverID = (int)reader["resolver_fk"],
                 description = (string)reader["description"],
-                status = state,
+                status = tick.StringToStatus((string)reader["status"]),
                 amount = (decimal)reader["amount"]
             });
         }
         return tickets;
     }
+    
     public Ticket GetTicketById(int ticketID)
     {
         SqlConnection conn = _connectionFactory.GetConnection();
         conn.Open();
 
-        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Tickets WHERE author_fk = @ID;", conn);
+        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Tickets WHERE ticket_ID = @ID;", conn);
         cmd.Parameters.AddWithValue("@ID", ticketID);
         SqlDataReader reader = cmd.ExecuteReader();
 
         while(reader.Read())
         {
             Ticket tick = new Ticket();
-            Status state = (Status)tick.StringToNum((string)reader["status"]);
 
             return new Ticket
             {
@@ -117,13 +114,14 @@ public class TicketRepository : ITicketDAO
                 authorID = (int)reader["author_fk"],
                 resolverID = (int)reader["resolver_fk"],
                 description = (string)reader["description"],
-                status = state,
+                status = tick.StringToStatus((string)reader["status"]),
                 amount = (decimal)reader["amount"]
             };
         }
         throw new ResourceNotFoundException("Could not find the ticket associated with the ID");
     }
-    public Ticket CreateTicket(Ticket newTicketToAdd)
+    
+    public bool CreateTicket(Ticket NewTicketToAdd)
     {
         DataSet ticketSet = new DataSet();
 
@@ -136,11 +134,11 @@ public class TicketRepository : ITicketDAO
         if(ticketTable != null)
         {
             DataRow newTicket = ticketTable.NewRow();
-            newTicket["author_fk"] = newTicketToAdd.authorID;
-            newTicket["resolver_fk"] = newTicketToAdd.resolverID;
-            newTicket["description"] = newTicketToAdd.description;
-            newTicket["status"] = newTicketToAdd.status;
-            newTicket["amount"] = newTicketToAdd.amount;
+            newTicket["author_fk"] = NewTicketToAdd.authorID;
+            newTicket["resolver_fk"] = NewTicketToAdd.resolverID;
+            newTicket["description"] = NewTicketToAdd.description;
+            newTicket["status"] = NewTicketToAdd.status;
+            newTicket["amount"] = NewTicketToAdd.amount;
         
             ticketTable.Rows.Add(newTicket);
 
@@ -150,20 +148,34 @@ public class TicketRepository : ITicketDAO
             ticketAdapter.InsertCommand = insertCommand;
 
             ticketAdapter.Update(ticketTable);
+            return true;
         }
 
-        return newTicketToAdd;
+        return false;
     }
-    public Ticket UpdateTicket(Ticket UpdatedTicket)
+    
+    public bool UpdateTicket(Ticket UpdatedTicket)
     {
-        DataSet ticketSet = new DataSet();
+        SqlConnection conn = _connectionFactory.GetConnection();
+        conn.Open();
 
-        SqlDataAdapter ticketAdapter = new SqlDataAdapter("SELECT * FROM ers.Tickets", _connectionFactory.GetConnection());
-
-        ticketAdapter.Fill(ticketSet, "ticketTable");
-
-        DataTable? ticketTable = ticketSet.Tables["ticketTable"];
+        SqlCommand cmd = new SqlCommand("UPDATE ers.Tickets SET author_fk = @afk, resolver_fk = @rfk, description = @d, status = @s, amount = @amt WHERE ticket_ID = @ID;", conn);
         
-        return new Ticket();
+        cmd.Parameters.AddWithValue("@ID", UpdatedTicket.ID);
+        cmd.Parameters.AddWithValue("@afk", UpdatedTicket.authorID);
+        cmd.Parameters.AddWithValue("@rfks", UpdatedTicket.resolverID);
+        cmd.Parameters.AddWithValue("@d", UpdatedTicket.description);
+        cmd.Parameters.AddWithValue("@s", UpdatedTicket.StatusToString(UpdatedTicket.status));
+        cmd.Parameters.AddWithValue("@amt", UpdatedTicket.amount);
+
+        /// try 
+        /// excute command queury 
+        /// return true!
+
+        /// catch return false or throw new Exception
+
+        /// trypase --> trys to parse, gives false if it doesnt work
+        /// parse ---> throws an exception
+        return true;
     }
 }

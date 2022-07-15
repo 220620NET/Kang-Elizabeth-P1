@@ -5,6 +5,9 @@
 
 #My own files
 connectionString.txt
+appsettings.Development.json
+appsettings.json
+
 
 # User-specific files
 *.rsuser

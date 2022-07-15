@@ -39,3 +39,5 @@ CREATE TABLE ers;
 SELECT * FROM ers.Users;
 SELECT * FROM ers.Tickets;
 
+
+UPDATE ers.Tickets SET author_fk = 2, resolver_fk = 2, description = 'hi', status = 'Approved' WHERE ticket_ID = 1;

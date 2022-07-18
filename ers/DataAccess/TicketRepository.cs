@@ -168,8 +168,19 @@ public class TicketRepository : ITicketDAO
         cmd.Parameters.AddWithValue("@s", UpdatedTicket.StatusToString(UpdatedTicket.status));
         cmd.Parameters.AddWithValue("@amt", UpdatedTicket.amount);
 
-        cmd.ExecuteReader();
+        try
+        {
+            cmd.ExecuteReader();
+
+            int rowsAffected = cmd.ExecuteNonQuery();
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
         
+        return true;
+
         /// try 
         /// excute command queury 
         /// return true!
@@ -178,6 +189,5 @@ public class TicketRepository : ITicketDAO
 
         /// trypase --> trys to parse, gives false if it doesnt work
         /// parse ---> throws an exception
-        return true;
     }
 }

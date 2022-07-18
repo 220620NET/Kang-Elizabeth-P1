@@ -168,6 +168,8 @@ public class TicketRepository : ITicketDAO
         cmd.Parameters.AddWithValue("@s", UpdatedTicket.StatusToString(UpdatedTicket.status));
         cmd.Parameters.AddWithValue("@amt", UpdatedTicket.amount);
 
+        cmd.ExecuteReader();
+        
         /// try 
         /// excute command queury 
         /// return true!

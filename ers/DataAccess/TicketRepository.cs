@@ -174,11 +174,11 @@ public class TicketRepository : ITicketDAO
 
             int rowsAffected = cmd.ExecuteNonQuery();
         }
-        catch(Exception e)
+        catch(Exception)
         {
             return false;
         }
-        
+
         return true;
 
         /// try 

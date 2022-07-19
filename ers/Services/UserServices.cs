@@ -19,7 +19,7 @@ public class UserServices
     /// <param name="username"></param>
     /// <returns>User with specified username</returns>
     /// <exception cref="UsernameNotAvailable">Occurs if no such username exists or if table is null</exception>
-    public User GetUserByUserName(string username)
+    public User GetUserByUsername(string username)
     {
         try
         {

@@ -41,7 +41,11 @@ public class User
         this.role = role;
     }
 
-    public User() {}
+    public User()
+    {
+        this.username = "";
+        this.password = "";
+    }
 
     /// <summary>
     /// This method turns a String into a Role enum.
@@ -84,7 +88,7 @@ public class User
             "Role = " + role;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null || GetType() != obj.GetType())
         {

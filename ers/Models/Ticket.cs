@@ -11,7 +11,7 @@ public class Ticket
     public int ID { get; set;}
     public int authorID { get; set;}
     public int resolverID { get; set;}
-    public string description { get; set;}
+    public string? description { get; set;}
     public Status status { get; set;}
     public decimal amount { get; set;}
 
@@ -36,6 +36,7 @@ public class Ticket
     
     public Ticket(int authorID, string descriptiom, decimal amount)
     {
+        // params
         this.authorID = authorID;
         this.description = description;
         this.status = Status.Pending;
@@ -89,7 +90,7 @@ public class Ticket
             "Amount = " + amount;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null || GetType() != obj.GetType())
         {
@@ -117,6 +118,7 @@ public class Ticket
         hashcode = hashcode * 2 ^ ID.GetHashCode();
         hashcode = hashcode * 2 ^ authorID.GetHashCode();
         hashcode = hashcode * 2 ^ resolverID.GetHashCode();
+        description = "";
         hashcode = hashcode * 2 ^ description.GetHashCode();
         hashcode = hashcode * 2 ^ status.GetHashCode();
         hashcode = hashcode * 2 ^ amount.GetHashCode();

@@ -29,4 +29,39 @@ public class UserController
             return Results.NotFound("There are no users");
         }
     }
+
+    /// <summary>
+    /// Controller to find user from ID
+    /// </summary>
+    /// <param name="ID">User ID to find</param>
+    /// <returns>Status Code 202 and user exists and given</returns>
+    public IResult GetUserByID(int ID)
+    {
+        try
+        {
+            User user = _Services.GetUserByUserId(ID);
+            return Results.Accepted("/users/id/" + ID, user);
+        }
+        catch(ResourceNotFoundException )
+        {
+            return Results.BadRequest("No user with matching ID");
+        }
+        catch (UsernameNotAvailableException)
+        {
+            return Results.BadRequest("??? idk");
+        }
+    }
+
+    public IResult GetUserByUsername(string username)
+    {
+        try
+        {
+            User user = _Services.GetUserByUsername(username);
+            return Results.Accepted("/users/username/" + username, username);
+        }
+        catch (System.Exception)
+        {
+            return Results.BadRequest("That username is not available");
+        }
+    }
 }

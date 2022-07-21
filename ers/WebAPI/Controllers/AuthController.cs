@@ -24,6 +24,7 @@ public class AuthController
     {
         try
         {
+            newUser.username = newUser.username != null ? newUser.username : "";
             _authServices.Register(newUser);
             newUser =_userServices.GetUserByUsername(newUser.username);
             return Results.Created("/register", newUser);

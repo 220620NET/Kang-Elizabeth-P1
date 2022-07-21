@@ -23,7 +23,8 @@ public class TicketController
         try
         {
             bool test = _Services.SubmitReimbursement(newTicket);
-            return Results.Accepted("/submit", _Services.GetReimbursementByUserID(newTicket.authorID));
+            List<Ticket> tix = _Services.GetReimbursementByUserID(newTicket.authorID);
+            return Results.Accepted("/submit", tix);
         }
         catch(ResourceNotFoundException)
         {
@@ -76,7 +77,7 @@ public class TicketController
             {
                 throw new ResourceNotFoundException();
             }
-            return Results.Accepted("/tickets/status/{state}", listTickets);
+            return Results.Accepted("/ticket/status/{state}", listTickets);
         }
         catch (ResourceNotFoundException)
         {
@@ -94,7 +95,7 @@ public class TicketController
         try
         {
             List<Ticket> listTickets = _Services.GetReimbursementByUserID(authorID);
-            return Results.Accepted("/tickets/author/" + authorID, listTickets);
+            return Results.Accepted("/ticket/author/{authorID}", listTickets);
         }
         catch (ResourceNotFoundException)
         {
@@ -112,7 +113,7 @@ public class TicketController
         try
         {
             Ticket ticket = _Services.GetReimbursementByID(ticketID);
-            return Results.Accepted("tickets/id/" + ticketID);
+            return Results.Accepted("ticket/{ticketID}", ticket);
         }
         catch (System.Exception)
         {

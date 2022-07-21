@@ -22,7 +22,7 @@ public class UserController
         try
         {
             List<User> ListUsers = _Services.GetAllUsers();
-            return Results.Accepted("/users", ListUsers);
+            return Results.Accepted("/user", ListUsers);
         }
         catch(ResourceNotFoundException)
         {
@@ -40,7 +40,7 @@ public class UserController
         try
         {
             User user = _Services.GetUserByUserId(ID);
-            return Results.Accepted("/users/id/" + ID, user);
+            return Results.Accepted("/user/id/{id}", user);
         }
         catch(ResourceNotFoundException )
         {
@@ -57,9 +57,9 @@ public class UserController
         try
         {
             User user = _Services.GetUserByUsername(username);
-            return Results.Accepted("/users/username/" + username, username);
+            return Results.Accepted("/user/username/{username}", user);
         }
-        catch (System.Exception)
+        catch(UsernameNotAvailableException)
         {
             return Results.BadRequest("That username is not available");
         }

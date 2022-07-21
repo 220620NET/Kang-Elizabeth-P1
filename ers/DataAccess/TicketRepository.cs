@@ -23,15 +23,16 @@ public class TicketRepository : ITicketDAO
         SqlCommand cmd = new SqlCommand("SELECT * FROM ers.tickets", conn);
         SqlDataReader reader = cmd.ExecuteReader();
 
+        Ticket tick = new Ticket();
+
         while(reader.Read())
         {
-            Ticket tick = new Ticket();
             
             tickets.Add(new Ticket
             {
                 ID = (int)reader["ticket_ID"],
                 authorID = (int)reader["author_fk"],
-                resolverID = (int)reader["resolver_fk"],
+                resolverID = Convert.IsDBNull(reader["resolver_fk"]) ? null : (int?) reader["resolver_fk"],
                 description = (string)reader["description"],
                 status = tick.StringToStatus((string)reader["status"]),
                 amount = (decimal)reader["amount"]
@@ -58,7 +59,7 @@ public class TicketRepository : ITicketDAO
             {
                 ID = (int)reader["ticket_ID"],
                 authorID = (int)reader["author_fk"],
-                resolverID = (int)reader["resolver_fk"],
+                resolverID = Convert.IsDBNull(reader["resolver_fk"]) ? null : (int?) reader["resolver_fk"],
                 description = (string)reader["description"],
                 status = tick.StringToStatus((string)reader["status"]),
                 amount = (decimal)reader["amount"]
@@ -66,27 +67,28 @@ public class TicketRepository : ITicketDAO
         }
         return tickets;
     }
-
-    public List<Ticket> GetAllTicketsByStatus (Status status)
+    public List<Ticket> GetAllTicketsByStatus(Status status)
     {
         List<Ticket> tickets = new List<Ticket>();
+        Ticket tick = new Ticket();
+
         SqlConnection conn = _connectionFactory.GetConnection();
         conn.Open();
+        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Tickets WHERE status = @s;", conn);
 
-        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Tickets WHERE author_fk = @s;", conn);
-        cmd.Parameters.AddWithValue("@s", status);
+        
+        cmd.Parameters.AddWithValue("@s", tick.StatusToString(status));
 
         SqlDataReader reader = cmd.ExecuteReader();
 
         while(reader.Read())
         {
-            Ticket tick = new Ticket();
-            
+
             tickets.Add(new Ticket
             {
                 ID = (int)reader["ticket_ID"],
                 authorID = (int)reader["author_fk"],
-                resolverID = (int)reader["resolver_fk"],
+                resolverID = Convert.IsDBNull(reader["resolver_fk"]) ? null : (int?) reader["resolver_fk"],
                 description = (string)reader["description"],
                 status = tick.StringToStatus((string)reader["status"]),
                 amount = (decimal)reader["amount"]
@@ -98,96 +100,92 @@ public class TicketRepository : ITicketDAO
     public Ticket GetTicketById(int ticketID)
     {
         SqlConnection conn = _connectionFactory.GetConnection();
-        conn.Open();
-
+        
         SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Tickets WHERE ticket_ID = @ID;", conn);
         cmd.Parameters.AddWithValue("@ID", ticketID);
-        SqlDataReader reader = cmd.ExecuteReader();
+        
+        Ticket tix = new Ticket();
 
-        while(reader.Read())
+        try
         {
-            Ticket tick = new Ticket();
-
-            return new Ticket
+            conn.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while(reader.Read())
             {
-                ID = (int)reader["ticket_ID"],
-                authorID = (int)reader["author_fk"],
-                resolverID = (int)reader["resolver_fk"],
-                description = (string)reader["description"],
-                status = tick.StringToStatus((string)reader["status"]),
-                amount = (decimal)reader["amount"]
-            };
+                Ticket ticket = new Ticket((int)reader[0], (int)reader[1], Convert.IsDBNull(reader[2]) ? null : (int?) reader[2], (string)reader[3], tix.StringToStatus((string)reader[4]), (decimal)reader[5]);
+                tix = ticket;
+            }
         }
-        throw new ResourceNotFoundException("Could not find the ticket associated with the ID");
+        catch(ResourceNotFoundException)
+        {
+
+            throw new ResourceNotFoundException();
+        }
+        return tix;
     }
     
     public bool CreateTicket(Ticket NewTicketToAdd)
     {
-        DataSet ticketSet = new DataSet();
-
-        SqlDataAdapter ticketAdapter = new SqlDataAdapter("SELECT * FROM ers.Tickets", _connectionFactory.GetConnection());
-
-        ticketAdapter.Fill(ticketSet, "ticketTable");
-
-        DataTable? ticketTable = ticketSet.Tables["ticketTable"];
-
-        if(ticketTable != null)
+        string sql= "INSERT INTO ers.Tickets (author_fk, description, status, amount) VALUES (@aid, @d, @s, @a);";
+        //datatype for an active connection
+        SqlConnection conn = _connectionFactory.GetConnection();    
+        SqlCommand command = new SqlCommand(sql, conn);
+        command.Parameters.AddWithValue("@aid", NewTicketToAdd.authorID);
+        command.Parameters.AddWithValue("@d", NewTicketToAdd.description);
+        command.Parameters.AddWithValue("@s", NewTicketToAdd.StatusToString(NewTicketToAdd.status));
+        command.Parameters.AddWithValue("@a", NewTicketToAdd.amount);
+        try
         {
-            DataRow newTicket = ticketTable.NewRow();
-            newTicket["author_fk"] = NewTicketToAdd.authorID;
-            newTicket["resolver_fk"] = NewTicketToAdd.resolverID;
-            newTicket["description"] = NewTicketToAdd.description;
-            newTicket["status"] = NewTicketToAdd.status;
-            newTicket["amount"] = NewTicketToAdd.amount;
-        
-            ticketTable.Rows.Add(newTicket);
-
-            SqlCommandBuilder cmdbuilder = new SqlCommandBuilder(ticketAdapter);
-
-            SqlCommand insertCommand = cmdbuilder.GetInsertCommand();
-            ticketAdapter.InsertCommand = insertCommand;
-
-            ticketAdapter.Update(ticketTable);
-            return true;
+            conn.Open();
+            int rowsAffected = command.ExecuteNonQuery();
+            conn.Close();
+            if (rowsAffected != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-
-        return false;
+        catch (ResourceNotFoundException)
+        {
+            throw new ResourceNotFoundException();
+        }
+        catch (UsernameNotAvailableException)
+        {
+            throw new UsernameNotAvailableException();
+        }
     }
     
     public bool UpdateTicket(Ticket UpdatedTicket)
     {
         SqlConnection conn = _connectionFactory.GetConnection();
-        conn.Open();
 
-        SqlCommand cmd = new SqlCommand("UPDATE ers.Tickets SET author_fk = @afk, resolver_fk = @rfk, description = @d, status = @s, amount = @amt WHERE ticket_ID = @ID;", conn);
+        SqlCommand cmd = new SqlCommand("UPDATE ers.Tickets SET resolver_fk = @rfk, status = @s WHERE ticket_ID = @ID;", conn);
         
         cmd.Parameters.AddWithValue("@ID", UpdatedTicket.ID);
-        cmd.Parameters.AddWithValue("@afk", UpdatedTicket.authorID);
-        cmd.Parameters.AddWithValue("@rfks", UpdatedTicket.resolverID);
-        cmd.Parameters.AddWithValue("@d", UpdatedTicket.description);
+        cmd.Parameters.AddWithValue("@rfk", UpdatedTicket.resolverID);
         cmd.Parameters.AddWithValue("@s", UpdatedTicket.StatusToString(UpdatedTicket.status));
-        cmd.Parameters.AddWithValue("@amt", UpdatedTicket.amount);
 
         try
         {
-            cmd.ExecuteReader();
-
+            conn.Open();
             int rowsAffected = cmd.ExecuteNonQuery();
+            conn.Close();
+
+            if(rowsAffected != 0)
+            {
+                return true;
+            }
+            else
+            {
+                throw new ResourceNotFoundException();
+            }
         }
-        catch(Exception)
+        catch(ResourceNotFoundException)
         {
-            return false;
+            throw new ResourceNotFoundException();
         }
-
-        return true;
-
-        /// try 
-        /// excute command queury 
-        /// return true!
-
-        /// catch return false or throw new Exception
-
-        /// trypase --> trys to parse, gives false if it doesnt work
-        /// parse ---> throws an exception
     }
 }

@@ -31,7 +31,7 @@ public class AuthServices
             {
                 throw new ResourceNotFoundException();
             }
-            else if(user.password == password)
+            if(user.password == password)
             {
                 return user;
             }
@@ -56,7 +56,7 @@ public class AuthServices
     /// <param name="newUser"></param>
     /// <returns>Registered new user</returns>
     /// <exception cref="UsernameNotAvailable">Occurs if the provided username already exists in the database or if the username is harmful</exception>
-    public bool Register(User newUser)
+    public User Register(User newUser)
     {
         try
         {
@@ -78,6 +78,10 @@ public class AuthServices
         catch(UsernameNotAvailableException)
         {
             throw new UsernameNotAvailableException();                
-        }            
+        }
+        catch(ResourceNotFoundException)
+        {
+            return _user.CreateUser(newUser);
+        }  
     }
 }

@@ -6,7 +6,7 @@ public class ConnectionFactory
 {
     private static ConnectionFactory? _instance;
     private readonly string _connectionString;
-    private ConnectionFactory(string connectionString)
+    public ConnectionFactory(string connectionString)
     {
         _connectionString = connectionString;
     }

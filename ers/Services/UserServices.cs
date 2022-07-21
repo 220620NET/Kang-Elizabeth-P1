@@ -23,6 +23,7 @@ public class UserServices
     {
         try
         {
+            username = username != null ? username : "";
             return _userDAO.GetUserByUsername(username);
         }
         catch(UsernameNotAvailableException)
@@ -57,23 +58,23 @@ public class UserServices
     /// <exception cref="ResourceNotFoundException">Occurs when Table is null</exception>
     public User GetUserByUserId(int userId)
     {
-        User users = new User();
+        User user = new User();
         try
         {
             List<User> userList = GetAllUsers();
-            if (userList.Count <userId)
+            if (userList.Count < userId)
             {
                 throw new ResourceNotFoundException();
             }
             else
             {
-                users = _userDAO.GetUserById(userId);
+                user = _userDAO.GetUserById(userId);
             }
         }
         catch (ResourceNotFoundException)
         {
             throw new ResourceNotFoundException();
         }
-        return users;
+        return user;
     }
 }

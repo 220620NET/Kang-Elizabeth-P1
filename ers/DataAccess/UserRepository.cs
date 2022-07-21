@@ -13,7 +13,7 @@ public class UserRepository : IUserDAO
     {
         _connectionFactory = connectionFactory;
     }
-    
+
     public List<User> GetAllUsers()
     {
         List<User> users = new List<User>();
@@ -65,55 +65,75 @@ public class UserRepository : IUserDAO
     public User GetUserByUsername(string username)
     {
         SqlConnection conn = _connectionFactory.GetConnection();
-        conn.Open();
-
-        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Users WHERE user_ID = @usr;", conn);
+        SqlCommand cmd = new SqlCommand("SELECT * FROM ers.Users WHERE username = @usr;", conn);
         cmd.Parameters.AddWithValue("@usr", username);
-        SqlDataReader reader = cmd.ExecuteReader();
-
-        while(reader.Read())
+        User usr = new User();
+        try
         {
-            User usr = new User();
-
-            return new User
+            conn.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            if(!reader.HasRows)
             {
-                ID = (int)reader["user_ID"],
-                username = (string)reader["username"],
-                password = (string)reader["password"],
-                role = usr.StringToRole((string)reader["role"])
-            };
+                throw new ResourceNotFoundException();
+            }
+            else
+            {
+                usr = new User((int)reader[0], (string)reader[1], (string)reader[2], usr.StringToRole((string)reader[3]));
+            }
+            reader.Close();
+            conn.Close();
         }
-        throw new ResourceNotFoundException("Could not find the user associated with the username");
+        catch(UsernameNotAvailableException)
+        {
+
+            throw new UsernameNotAvailableException();
+        }
+        catch(ResourceNotFoundException)
+        {
+            throw new ResourceNotFoundException("Could not find the user associated with the username");
+        }
+        return usr; 
     }
     
-    public bool CreateUser(User NewUserToAdd)
+    public User CreateUser(User newUser)
     {
-        DataSet userSet = new DataSet();
+        string sql = "INSERT INTO ers.users(username, password, role) VALUES (@u, @p, @r)";
 
-        SqlDataAdapter userAdapter = new SqlDataAdapter("SELECT * FROM ers.Users", _connectionFactory.GetConnection());
+        SqlConnection conn = _connectionFactory.GetConnection();
 
-        userAdapter.Fill(userSet, "userTable");
+        SqlCommand command = new SqlCommand(sql, conn);
 
-        DataTable? userTable = userSet.Tables["userTable"];
+        command.Parameters.AddWithValue("@u", newUser.username);
+        command.Parameters.AddWithValue("@p", newUser.password);
+        command.Parameters.AddWithValue("@r", newUser.RoleToString(newUser.role));
 
-        if(userTable != null)
+        try
         {
-            DataRow newUser = userTable.NewRow();
-            newUser["username"] = NewUserToAdd.username;
-            newUser["password"] = NewUserToAdd.password;
-            newUser["role"] = NewUserToAdd.role;
-        
-            userTable.Rows.Add(newUser);
+            conn.Open();
+            int rowsAffected = command.ExecuteNonQuery();
+            conn.Close();
 
-            SqlCommandBuilder cmdbuilder = new SqlCommandBuilder(userAdapter);
-
-            SqlCommand insertCommand = cmdbuilder.GetInsertCommand();
-            userAdapter.InsertCommand = insertCommand;
-
-            userAdapter.Update(userTable);
-            return true;
+            if(rowsAffected != 0)
+            {
+                if(newUser.username != null)
+                {
+                    return GetUserByUsername(newUser.username);
+                }
+                else
+                {
+                    throw new UsernameNotAvailableException();
+                }
+            }
+            else
+            {
+                throw new UsernameNotAvailableException();
+            }
         }
+        catch(UsernameNotAvailableException)
+        {
 
-        return false;
+            throw new UsernameNotAvailableException();
+        }
     }
 }

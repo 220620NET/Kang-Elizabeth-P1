@@ -28,7 +28,7 @@ public class TicketServices
             {
                 return true;
             }
-            else { return false; }
+            else {return false;}
         }
         catch(ResourceNotFoundException)
         {
@@ -54,6 +54,18 @@ public class TicketServices
         }
     }
 
+     public List<Ticket> GetAllTickets()
+    {
+        try
+        {
+            return _ticketDAO.GetAllTickets();
+        }
+        catch (ResourceNotFoundException)
+        {
+            throw new ResourceNotFoundException();
+        }
+    }
+
     /// <summary>
     /// Service to retrieve a specific ticket by its individual ID
     /// </summary>
@@ -62,14 +74,24 @@ public class TicketServices
     /// <exception cref="ResourceNotFoundException">Occurs if that ticket hasn't been made yet</exception>
     public Ticket GetReimbursementByID(int ticketID)
     {
+        Ticket tix = new Ticket();
         try
         {
-            return _ticketDAO.GetTicketById(ticketID);
+            List<Ticket> ticketList = GetAllTickets();
+            if (ticketList.Count < ticketID)
+            {
+                throw new ResourceNotFoundException();
+            }
+            else
+            {
+                tix = _ticketDAO.GetTicketById(ticketID);
+            }
         }
         catch (ResourceNotFoundException)
         {
             throw new ResourceNotFoundException();
         }
+        return tix;
     }
 
     /// <summary>

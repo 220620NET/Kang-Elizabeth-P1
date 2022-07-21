@@ -10,7 +10,7 @@ public class Ticket
 {
     public int ID { get; set;}
     public int authorID { get; set;}
-    public int resolverID { get; set;}
+    public int? resolverID { get; set;}
     public string? description { get; set;}
     public Status status { get; set;}
     public decimal amount { get; set;}
@@ -24,7 +24,7 @@ public class Ticket
     /// <param name="description">The description of the reason for the request</param>
     /// <param name="status">The status of the Ticket can be Pending, Approved, or Denied/</param>
     /// <param name="amount">The dollar amount stored on the Ticket/</param>
-    public Ticket(int ID, int authorID, int resolverID, string description, Status status, decimal amount)
+    public Ticket(int ID, int authorID, int? resolverID, string description, Status status, decimal amount)
     {
         this.ID = ID;
         this.authorID = authorID;
@@ -41,6 +41,12 @@ public class Ticket
         this.description = description;
         this.status = Status.Pending;
         this.amount = amount;
+    }
+    public Ticket(int resolverID, Status status)
+    {
+        // params
+        this.resolverID = resolverID;
+        this.status = status;
     }
 
     public Ticket() {}

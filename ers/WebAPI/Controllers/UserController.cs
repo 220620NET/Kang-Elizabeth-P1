@@ -63,5 +63,9 @@ public class UserController
         {
             return Results.BadRequest("That username is not available");
         }
+        catch(ResourceNotFoundException )
+        {
+            return Results.BadRequest("No user with matching username");
+        }
     }
 }

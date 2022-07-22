@@ -16,8 +16,6 @@ CREATE TABLE ers.Users (
 	PRIMARY KEY (user_ID)
 );
 
-
-
 CREATE TABLE ers.Tickets (
 	ticket_ID INT IDENTITY,
 	author_fk INT NOT NULL FOREIGN KEY REFERENCES ers.Users(user_ID),
@@ -28,25 +26,23 @@ CREATE TABLE ers.Tickets (
 	PRIMARY KEY (ticket_ID)
 );
 
+
 INSERT INTO ers.Users (username, password, role) VALUES ('ManagerUser1', 'ManagerPass1', 'Manager');
 INSERT INTO ers.Users (username, password, role) VALUES ('ManagerUser2', 'ManagerPass2', 'Manager');
 
 INSERT INTO ers.Users (username, password, role) VALUES ('EmployeeUser1', 'EmployeePass1', 'Employee');
 INSERT INTO ers.Users (username, password, role) VALUES ('EmployeeUser2', 'EmployeePass2', 'Employee');
 
-
 INSERT INTO ers.Tickets (author_fk, description, status, amount) VALUES (3,'Testing1', 'Pending', 1231);
 INSERT INTO ers.Tickets (author_fk, resolver_fk, description, status, amount) VALUES (4, 2, 'Testing2', 'Pending', 534);
 INSERT INTO ers.Tickets (author_fk, resolver_fk, description, status, amount) VALUES (3, 1, 'Testing3', 'Pending', 798);
 INSERT INTO ers.Tickets (author_fk, resolver_fk, description, status, amount) VALUES (4, 1, 'Testing4', 'Pending', 678);
 
+
 UPDATE ers.Tickets SET status = 'Approved' WHERE ticket_ID = 2;
 UPDATE ers.Tickets SET status = 'Approved' WHERE ticket_ID = 3;
 UPDATE ers.Tickets SET status = 'Denied' WHERE ticket_ID = 4;
 
-
-SELECT * FROM ers;
-CREATE TABLE ers;
 
 SELECT * FROM ers.Users;
 SELECT * FROM ers.Tickets;

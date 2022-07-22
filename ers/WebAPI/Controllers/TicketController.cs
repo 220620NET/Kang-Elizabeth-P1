@@ -13,6 +13,23 @@ public class TicketController
     }
 
     /// <summary>
+    /// Controller get all tickets
+    /// </summary>
+    /// <returns>List of all tickets</returns>
+    public IResult GetAllTickets()
+    {
+        try
+        {
+            List<Ticket> ListTickets = _Services.GetAllTickets();
+            return Results.Accepted("/ticket", ListTickets);
+        }
+        catch(ResourceNotFoundException)
+        {
+            return Results.NotFound("There are no users");
+        }
+    }
+
+    /// <summary>
     /// Controller for creating a new ticket
     /// </summary>
     /// <param name="newTicket">The ticket object for the new ticket </param>
@@ -104,7 +121,7 @@ public class TicketController
     }
 
     /// <summary>
-    /// 
+    /// Controller to get the Ticket by its ID
     /// </summary>
     /// <param name="ticketID"></param>
     /// <returns>Status code 202 and </returns>

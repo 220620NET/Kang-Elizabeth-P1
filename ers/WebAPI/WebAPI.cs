@@ -52,6 +52,7 @@ app.MapGet("/user/username/{username}", (string username, UserController control
 app.MapPost("/ticket/submit", (Ticket newTicket, TicketController controller) => controller.Submit(newTicket));
 app.MapPost("/ticket/process", (Ticket newTicket, TicketController controller) => controller.Process(newTicket));
 
+app.MapGet("/ticket", (TicketController controller) =>controller.GetAllTickets());
 app.MapGet("/ticket/author/{authorID}", (int authorID, TicketController controller) => controller.GetTicketsByAuthor(authorID));
 app.MapGet("/ticket/{ticketID}", (int ticketID, TicketController controller) => controller.GetTicketByTicketID(ticketID));
 app.MapGet("/ticket/status/{state}", (string state, TicketController controller) => controller.GetTicketsByStatus(state));

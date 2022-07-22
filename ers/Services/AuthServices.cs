@@ -66,13 +66,14 @@ public class AuthServices
             {
                 throw new UsernameNotAvailableException();
             }
-            else if (newUser.username == "" || newUser.username.Contains(";") || newUser.username.Contains("drop"))
+            else if (newUser.username == "" || newUser.username.Contains(";"))
             {
                 throw new UsernameNotAvailableException();
             }
-            else
+            else    
             {
-                return _user.CreateUser(newUser);
+                User user = _user.CreateUser(newUser);
+                return user;
             }
         }
         catch(UsernameNotAvailableException)
